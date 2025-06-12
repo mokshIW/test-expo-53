@@ -1,6 +1,7 @@
-import { login } from "@/lib/api"; // <-- update with your path
+import { saveCredentials } from "@/lib/auth";
+import { login } from "@/lib/auth-api";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -9,20 +10,20 @@ export default function SignInScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const mutation = useMutation({
-    mutationFn: login,
-    onSuccess: (data) => {
-      // Save the token, then redirect
-      // For demo, we'll just alert and go home
-      // Save to secure storage in real app!
-      // Example: await SecureStore.setItemAsync('token', data.token);
-      Alert.alert("Success", "Login successful!");
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => login({ username, password }),
+    onSuccess: async (data) => {
+      await saveCredentials({
+        token: data.token,
+        username,
+        password,
+      });
       router.replace("/(root)/home");
     },
-    onError: (error: any) => {
+    onError: (err: any) => {
       Alert.alert(
         "Login failed",
-        error?.response?.data?.message || "Invalid credentials"
+        err?.response?.data?.message ?? "Invalid credentials"
       );
     },
   });
@@ -30,6 +31,8 @@ export default function SignInScreen() {
   return (
     <View className="flex-1 justify-center items-center bg-white p-4">
       <Text className="text-2xl font-bold mb-6">Sign In</Text>
+
+      {/* Username Field */}
       <View className="w-full mb-4">
         <Text className="text-base font-semibold mb-1 text-gray-700">
           Username
@@ -42,7 +45,9 @@ export default function SignInScreen() {
           onChangeText={setUsername}
         />
       </View>
-      <View className="w-full mb-4">
+
+      {/* Password Field */}
+      <View className="w-full mb-6">
         <Text className="text-base font-semibold mb-1 text-gray-700">
           Password
         </Text>
@@ -54,20 +59,22 @@ export default function SignInScreen() {
           onChangeText={setPassword}
         />
       </View>
+
       <TouchableOpacity
         className="bg-blue-600 w-full py-3 rounded mb-4"
-        onPress={() => mutation.mutate({ username, password })}
-        disabled={mutation.isPending}
+        onPress={() => mutate()}
+        disabled={isPending}
       >
         <Text className="text-center text-white font-semibold">
-          {mutation.isPending ? "Signing In..." : "Sign In"}
+          {isPending ? "Signing In…" : "Sign In"}
         </Text>
       </TouchableOpacity>
+
       <Text>
         Don't have an account?{" "}
-        <Link href="/(auth)/sign-up" className="text-blue-600 font-bold">
-          Sign Up
-        </Link>
+        <TouchableOpacity onPress={() => router.push("/(auth)/sign-up")}>
+          <Text className="text-blue-600 font-bold">Sign Up</Text>
+        </TouchableOpacity>
       </Text>
     </View>
   );

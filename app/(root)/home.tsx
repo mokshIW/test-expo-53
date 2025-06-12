@@ -1,3 +1,4 @@
+import { signOut } from "@/lib/auth";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -10,7 +11,7 @@ export default function HomeScreen() {
       <Text className="mb-8">You are now signed in!</Text>
       <TouchableOpacity
         className="bg-red-500 px-6 py-3 rounded"
-        onPress={() => router.replace("/(auth)/sign-in")}
+        onPress={() => signOut(router)}
       >
         <Text className="text-white font-semibold">Sign Out</Text>
       </TouchableOpacity>
