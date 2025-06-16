@@ -1,3 +1,4 @@
+import { QueryClient } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 
 export const TOKEN_KEY = "token";
@@ -43,7 +44,13 @@ export async function getStoredCredentials(): Promise<{
  * - Clears stored token/credentials
  * - Redirects to the Sign In screen
  */
-export async function signOut(router: { replace: (...args: any[]) => void }) {
+
+export async function signOut(
+  router: { replace: (...args: any[]) => void },
+  queryClient: QueryClient
+) {
   await clearCredentials();
+  // This clears all cached queries, including /me:
+  queryClient.invalidateQueries(); // no args = all queries
   router.replace("/(auth)/sign-in");
 }
