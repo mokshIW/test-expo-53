@@ -33,6 +33,8 @@ export default function Index() {
     })().finally(() => setLoading(false));
   }, []);
 
+  // console.log( getToken());
+
   // while checking credentials
   if (loading) {
     return (
