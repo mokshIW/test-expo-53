@@ -1,6 +1,7 @@
 // contexts/UserContext.tsx
 import api from "@/lib/api";
 import { clearCredentials, getToken } from "@/lib/auth";
+import { AuthenticatedUser } from "@/types/data";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, {
   createContext,
@@ -10,38 +11,6 @@ import React, {
   useState,
 } from "react";
 
-export type Badge = {
-  "@id": string;
-  "@type": string;
-  id: number;
-  title: string;
-  description: string;
-  badgeImage?: string;
-  createdAt: string;
-};
-
-export type UserBadge = {
-  "@id": string;
-  "@type": string;
-  id: number;
-  badgeId: Badge; // ✅
-  earnedCount: number;
-  earnedAt: string;
-};
-
-export type AuthenticatedUser = {
-  id: number;
-  username: string;
-  enabled?: boolean;
-  userBadges?: UserBadge[];
-  roles?: string[];
-  userContact?: {
-    firstName: string;
-    lastName: string;
-    phone?: string;
-  };
-  [key: string]: any;
-};
 
 type UserContextType = {
   user: AuthenticatedUser | null;

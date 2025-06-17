@@ -1,6 +1,7 @@
 // app/(root)/badges.tsx
-import { Badge, useUser } from "@/contexts/UserContext";
+import { useUser } from "@/contexts/UserContext";
 import api from "@/lib/api";
+import { Badge } from "@/types/data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
